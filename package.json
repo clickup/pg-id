@@ -1,0 +1,18 @@
+{
+  "name": "@clickup/pg-id",
+  "description": "Generate randomly-looking never repeating primary key ids and more",
+  "version": "2.10.292",
+  "license": "MIT",
+  "scripts": {
+    "build": "echo No build step.",
+    "test": "echo No test step.",
+    "docs": "echo No docs to generate.",
+    "clean": "echo No clean step.",
+    "copy-package-to-public-dir": "copy-package-to-public-dir.sh --exclude=pg-id-consts.sql",
+    "deploy": "npm publish --access=public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/clickup/pg-id"
+  }
+}

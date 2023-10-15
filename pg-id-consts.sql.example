@@ -1,0 +1,21 @@
+-- Based on https://en.wikipedia.org/wiki/Feistel_cipher
+
+--
+-- NEVER change these values, or the database will blow up!!!
+--
+
+-- Define the format of id (variadic part is 14 decimal positions, 46 bits).
+-- * EssssRRRRR... (E: 1..7, ssss: 0000...9999, R: 14 decimal positions)
+-- * 2^63 = 9_2233_72036854775808, so we have 19 decimal positions in total
+\set CONST_ENV_MUL 10
+\set CONST_SHARD_MUL 10000
+\set CONST_RND_MUL 100000000000000
+\set CONST_RND_BITS 46
+\set CONST_RND_TS_MUL 1000000000
+\set CONST_RND_TS_START 1262304000
+
+-- Crypto-constants for random looking ids: see id_gen(). The values below are
+-- very secret. Don't mess, don't change!
+\set CONST_MUL 10000007141763
+\set CONST_SUM 10000003795571
+\set CONST_MOD 10000009458232
