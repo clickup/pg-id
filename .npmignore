@@ -1,5 +1,6 @@
 pg-id-consts.sql
 tsconfig.tsbuildinfo
+.github
 
 node_modules
 package-lock.json

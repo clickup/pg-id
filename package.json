@@ -1,7 +1,7 @@
 {
   "name": "@clickup/pg-id",
   "description": "Generate randomly-looking never repeating primary key ids and more",
-  "version": "2.10.292",
+  "version": "2.10.293",
   "license": "MIT",
   "keywords": [
     "PostgreSQL",
