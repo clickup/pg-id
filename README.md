@@ -1,4 +1,4 @@
-# Generate randomly-looking never repeating primary key ids and more
+# pg-id: generates random-looking never repeating primary key ids and more
 
 This library contains PostgreSQL functions which generate bigint ids having the following format (with defaults from pg-id-consts.sql.example):
 

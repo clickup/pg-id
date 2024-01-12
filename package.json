@@ -3,12 +3,31 @@
   "description": "Generate randomly-looking never repeating primary key ids and more",
   "version": "2.10.292",
   "license": "MIT",
+  "keywords": [
+    "PostgreSQL",
+    "primary key",
+    "id generation",
+    "unique identifier",
+    "bigint",
+    "Feistel cipher",
+    "non-repeating",
+    "timestamp",
+    "monotonic",
+    "database",
+    "btree index",
+    "encryption",
+    "sharding",
+    "sequence",
+    "data security"
+  ],
   "scripts": {
     "build": "echo No build step.",
+    "lint": "echo No lint step.",
     "test": "echo No test step.",
     "docs": "echo No docs to generate.",
     "clean": "echo No clean step.",
     "copy-package-to-public-dir": "copy-package-to-public-dir.sh --exclude=pg-id-consts.sql",
+    "backport-package-from-public-dir": "backport-package-from-public-dir.sh",
     "deploy": "npm publish --access=public"
   },
   "repository": {
