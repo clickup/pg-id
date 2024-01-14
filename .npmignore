@@ -1,11 +1,13 @@
-pg-id-consts.sql
-tsconfig.tsbuildinfo
-.github
+dist/__tests__
+dist/**/__tests__
+dist/tsconfig.tsbuildinfo
+.npmrc
 
+# Common in both .gitignore and .npmignore
 node_modules
 package-lock.json
-pnpm-lock.yaml
 yarn.lock
+pnpm-lock.yaml
 .DS_Store
 *.log
 *.tmp
