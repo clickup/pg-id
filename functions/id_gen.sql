@@ -8,7 +8,7 @@ SELECT _id_template(
     --   EssssRRRRR...
     -- where decimal positions are:
     -- a) E is environment number (1..7)
-    -- b) s is micro-shard number (0..9999)
+    -- b) s is microshard number (0..9999)
     -- c) R is random-looking part (up to 10^14 which is > 2^46)
     DECLARE
       seq text := {current_schema} || '.id_seq';

@@ -5,14 +5,13 @@
 \ir ./functions/_id_init.sql
 \ir ./functions/id_gen_monotonic.sql
 \ir ./functions/id_gen_timestampic.sql
+\ir ./functions/id_gen_uuid.sql
 \ir ./functions/id_gen.sql
 \ir ./functions/id_pseudo_encrypt.sql
 \ir ./functions/id_test_dangerous.sql
 
 DROP FUNCTION _id_init(text);
 DROP FUNCTION _id_template(text, text[]);
-
-DROP FUNCTION IF EXISTS id_gen_test(integer);
 
 CREATE SEQUENCE IF NOT EXISTS id_seq
   START WITH 100000000

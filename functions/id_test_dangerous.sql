@@ -7,6 +7,13 @@ DECLARE
   ts timestamptz;
 BEGIN
   ts := clock_timestamp();
+  SELECT count(DISTINCT id_gen_uuid()) FROM generate_series(1, num) INTO v;
+  IF v <> num THEN
+    RAISE EXCEPTION 'Invalid number of id_gen_uuid() distinct values: % (expected %)', v, num;
+  END IF;
+  RAISE NOTICE 'id_gen_uuid(): % reqs/s', round(v / EXTRACT(SECONDS FROM clock_timestamp() - ts));
+
+  ts := clock_timestamp();
   SELECT count(DISTINCT id_gen()) FROM generate_series(1, num) INTO v;
   IF v <> num THEN
     RAISE EXCEPTION 'Invalid number of id_gen() distinct values: % (expected %)', v, num;

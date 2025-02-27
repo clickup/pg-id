@@ -8,7 +8,7 @@ SELECT _id_template(
     --   EssssNNNNN...
     -- where decimal positions are:
     -- a) E is environment number (1..7)
-    -- b) s is micro-shard number (0..9999)
+    -- b) s is microshard number (0..9999)
     -- c) N is monotonic sequence (up to 10^14)
     DECLARE
       seq text := {current_schema} || '.id_monotonic_seq';

@@ -3,6 +3,7 @@ DROP FUNCTION id_shard_no();
 
 DROP FUNCTION id_gen_monotonic();
 DROP FUNCTION id_gen_timestampic();
+DROP FUNCTION id_gen_uuid();
 DROP FUNCTION id_gen();
 DROP FUNCTION id_pseudo_encrypt(integer, bigint, numeric, numeric, numeric);
 DROP FUNCTION id_test_dangerous(integer);

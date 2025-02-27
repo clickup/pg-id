@@ -8,7 +8,7 @@ SELECT _id_template(
     --   EssssTTTTnnnn...
     -- where decimal positions are:
     -- a) E is environment number (1..7)
-    -- b) s is micro-shard number (0..9999)
+    -- b) s is microshard number (0..9999)
     -- c) T is timestamp in seconds since 2010-01-01 UTC (9 decimal digits, +17 years from 2023)
     -- c) n is monotonic sequence ring (up to 5 decimal digits, so up to 100k inserts/sec)
     DECLARE
