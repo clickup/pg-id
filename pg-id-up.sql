@@ -1,4 +1,49 @@
-\ir ./pg-id-consts.sql
+\set ON_ERROR_STOP off
+\if :{?CONST_MUL}
+  \echo CONST_MUL variable is already set, skipping pg-id.config.sql loading.
+\else
+  \ir ./pg-id.config.sql
+  \if :{?CONST_MUL}
+    \echo Found pg-id.config.sql, using it.
+  \else
+    \ir ../pg-id.config.sql
+    \if :{?CONST_MUL}
+      \echo Found ../pg-id.config.sql, using it.
+    \else
+      \ir ../../pg-id.config.sql
+      \if :{?CONST_MUL}
+        \echo Found ../../pg-id.config.sql, using it.
+      \else
+        \ir ../../../pg-id.config.sql
+        \if :{?CONST_MUL}
+          \echo Found ../../../pg-id.config.sql, using it.
+        \else
+          \ir ../../../../pg-id.config.sql
+          \if :{?CONST_MUL}
+            \echo Found ../../../../pg-id.config.sql, using it.
+          \else
+            \ir ../../../../../pg-id.config.sql
+            \if :{?CONST_MUL}
+              \echo Found ../../../../../pg-id.config.sql, using it.
+            \else
+              \ir ../../../../../../pg-id.config.sql
+              \if :{?CONST_MUL}
+                \echo Found ../../../../../../pg-id.config.sql, using it.
+              \else
+                \set ON_ERROR_STOP on
+                \set SHOW_CONTEXT never
+                DO $$ BEGIN
+                  RAISE EXCEPTION 'Could not find pg-id.config.sql in any of the parent directories.';
+                END $$;
+              \endif
+            \endif
+          \endif
+        \endif
+      \endif
+    \endif
+  \endif
+\endif
+\set ON_ERROR_STOP on
 
 \ir ./functions/_id_template.sql
 

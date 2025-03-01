@@ -13,8 +13,8 @@ BEGIN
   ) THEN
     IF env_no IS NULL OR env_no !~ '^[0-9]$' OR env_no::integer < 1 OR env_no::integer > 7 THEN
       RAISE EXCEPTION
-        'DB_ID_ENV_NO="%" must be a 1..7 number since 2^63 = 9_2233_72036854775808 and '
-        'value 8 is reserved. Alternatively, define id_env_no() function manually.',
+        'DB_ID_ENV_NO="%" environment variable must be a 1..7 number. '
+        'Alternatively, define id_env_no() function manually.',
         env_no;
     END IF;
     EXECUTE _id_template(

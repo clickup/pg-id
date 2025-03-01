@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION id_env_no() RETURNS integer LANGUAGE sql
 CREATE OR REPLACE FUNCTION id_shard_no() RETURNS integer LANGUAGE sql
   SET search_path FROM CURRENT AS 'SELECT 123';
 
+\ir ../../pg-id.config.sql.example
 \ir ../../pg-id-up.sql
 
 CREATE FUNCTION expect(sql text, exp text, msg text) RETURNS void LANGUAGE plpgsql AS $$
