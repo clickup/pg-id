@@ -1,8 +1,8 @@
 dist
 
 # Common in both .gitignore and .npmignore
+pg-id.config.sql
 node_modules
-package-lock.json
 yarn.lock
 pnpm-lock.yaml
 .DS_Store

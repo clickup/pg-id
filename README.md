@@ -101,9 +101,9 @@ Examples of ids generated (underscores are just for illustration):
 
 Similar to `id_gen()`, but instead of generating randomly looking ids, prepends
 the "sequence" part of the id with the current timestamp (actually, the number
-of seconds since 2010-01-01 UTC which is 9 decimal digits, i.e. +17 years from
-2023). The function reserves up to 5 decimal digits for the number part of the
-id, so within each second, up to 100k unique ids can be generated.
+of seconds since 2010-01-01 UTC). The function reserves up to 5 decimal digits
+for the number part of the id, so within each second, up to 100k unique ids can
+be generated.
 
 The function implicitly uses `id_seq_timestampic` sequence to get the
 information about the next available number.

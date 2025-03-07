@@ -27,7 +27,7 @@
     "test:db": "set -e; FILES=(functions/__tests__/test_*.sql); f() { if [ \"$1\" != \"\" ]; then FILES=(functions/__tests__/$1); fi; for f in ${FILES[@]}; do echo == $f; yarn psql -v ON_ERROR_STOP=on -f $f; echo; echo; done; }; f",
     "docs": ": No docs to generate.",
     "clean": ": No clean step.",
-    "copy-package-to-public-dir": "copy-package-to-public-dir.sh --exclude=pg-id-consts.sql",
+    "copy-package-to-public-dir": "copy-package-to-public-dir.sh",
     "backport-package-from-public-dir": "backport-package-from-public-dir.sh",
     "deploy": "npm publish --access=public"
   },
