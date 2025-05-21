@@ -4,7 +4,6 @@ dist/*.tsbuildinfo
 .npmrc
 
 # Common in both .gitignore and .npmignore
-pg-id.config.sql
 node_modules
 package-lock.json
 yarn.lock

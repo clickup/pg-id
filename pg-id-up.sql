@@ -1,34 +1,34 @@
 \set ON_ERROR_STOP off
 \if :{?CONST_MUL}
-  \echo CONST_MUL variable is already set, skipping pg-id.config.sql loading.
+  \warn CONST_MUL variable is already set, skipping pg-id.config.sql loading.
 \else
   \ir ./pg-id.config.sql
   \if :{?CONST_MUL}
-    \echo Found pg-id.config.sql, using it.
+    \warn Success! Found pg-id.config.sql, using it.
   \else
     \ir ../pg-id.config.sql
     \if :{?CONST_MUL}
-      \echo Found ../pg-id.config.sql, using it.
+      \warn Success! Found ../pg-id.config.sql, using it.
     \else
       \ir ../../pg-id.config.sql
       \if :{?CONST_MUL}
-        \echo Found ../../pg-id.config.sql, using it.
+        \warn Success! Found ../../pg-id.config.sql, using it.
       \else
         \ir ../../../pg-id.config.sql
         \if :{?CONST_MUL}
-          \echo Found ../../../pg-id.config.sql, using it.
+          \warn Success! Found ../../../pg-id.config.sql, using it.
         \else
           \ir ../../../../pg-id.config.sql
           \if :{?CONST_MUL}
-            \echo Found ../../../../pg-id.config.sql, using it.
+            \warn Success! Found ../../../../pg-id.config.sql, using it.
           \else
             \ir ../../../../../pg-id.config.sql
             \if :{?CONST_MUL}
-              \echo Found ../../../../../pg-id.config.sql, using it.
+              \warn Success! Found ../../../../../pg-id.config.sql, using it.
             \else
               \ir ../../../../../../pg-id.config.sql
               \if :{?CONST_MUL}
-                \echo Found ../../../../../../pg-id.config.sql, using it.
+                \warn Success! Found ../../../../../../pg-id.config.sql, using it.
               \else
                 \set ON_ERROR_STOP on
                 \set SHOW_CONTEXT never
