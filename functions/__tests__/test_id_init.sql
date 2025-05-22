@@ -96,7 +96,7 @@ SELECT expect_raise(
 SELECT expect_raise(
   $$SELECT _id_init('42', 10, 10000, 100000000000000, 1000000000)$$,
   '%in 1..8 range (MAX_BIGINT=9223372036854775807)%',
-  'error: MAX_BIGINT, 2 digits in env_no'
+  'error: MAX_BIGINT, 1 digit in env_no'
 ) \gset
 
 SELECT expect_raise(
@@ -112,9 +112,15 @@ SELECT expect_raise(
 ) \gset
 
 SELECT expect_raise(
+  $$SELECT _id_init('42', 10, 10000, 100000000000, 1000000000)$$,
+  '%in 1..8 range (MAX_SAFE_INTEGER=9007199254740991)%',
+  'error: MAX_SAFE_INTEGER, 1 digit in env_no'
+) \gset
+
+SELECT expect_raise(
   $$SELECT _id_init('1', 100, 10000, 10000000000, 1000000000)$$,
   '%in 10..89 range (MAX_SAFE_INTEGER=9007199254740991)%',
-  'error: MAX_SAFE_INTEGER'
+  'error: MAX_SAFE_INTEGER, 2 digits in env_no'
 ) \gset
 
 SELECT expect_raise(

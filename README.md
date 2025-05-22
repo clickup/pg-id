@@ -1,34 +1,54 @@
 # pg-id: generates random-looking never repeating primary key ids and more
 
-This library contains PostgreSQL functions which generate bigint ids having the
-following format:
+This library contains PostgreSQL functions to generate bigint ids having the
+following format (examples):
 
 ```
-EssssRRRRRRRRRRRRRR
+# Full BIGINT
+EssssRRRRRRRRRRRRRR  - 100 trillion ids per microshard
  ^   ^^^^^^^^^^^^^^
  4   14
+
+# Full BIGINT, 2 digits environment
+EEssssRRRRRRRRRRRRR  - 10 trillion ids
+^ ^   ^^^^^^^^^^^^^
+2 4   13
+
+# MAX_SAFE_INTEGER
+EssssRRRRRRRRRRR  - 100 billion ids
+^ ^  ^^^^^^^^^^^
+1 4   11
+
+# MAX_SAFE_INTEGER, 2 digits environment
+EEssssRRRRRRRRRR  - 10 billion ids
+^ ^   ^^^^^^^^^^
+2 4   10
 ```
 
-Also, `id_gen_uuid()` generates UUIDs looking like:
+Also, `id_gen_uuid()` generates UUIDs v4 looking like (examples):
 
 ```
+# UUID v4, one digit environment
 EssssRRR-RRRR-4RRR-NRRR-RRRRRRRRRRRR
+
+# UUID v4, two digit environment
+EEssssRR-RRRR-4RRR-NRRR-RRRRRRRRRRRR
 ```
 
 Here,
 
-- "E" is an "environment number" aka "cluster number" (e.g. denoting dev, test,
-  staging, production, or different production regions like us-east-1, us-west-2
-  etc.). The range of the 1st digit in E must be 1..7. The current environment
-  number (aka cluster number) should be returned by function `id_env_no()`: you
-  need to create it beforehand in the schema where you install the library (or,
-  alternatively, pass it in `DB_ID_ENV_NO` environment variable before
-  installing).
-- "ssss" is a 4-digit "microshard number". The range is 0..9999 by default. The
-  current value of the microshard should be returned by function
-  `id_shard_no()`: you need to create it beforehand in the schema where you
-  install the library (or, alternatively, the schema name should end with that
-  number; then, the library will auto-infer the shard number from it).
+- "E" or "EE" is an "environment number" aka "cluster number" (e.g. denoting
+  dev, test, staging, production, or different production regions like
+  us-east-1, us-west-2 etc.). The current environment number (aka cluster
+  number) should be returned by function `id_env_no()`: you need to create it
+  beforehand in the schema where you install the library (or, alternatively,
+  pass it in `DB_ID_ENV_NO` environment variable before installing).
+- "ssss" is a 4-digit "microshard number". The range is 0..9999 by default (but
+  you can allocate less or more digits for it). The current value of the
+  microshard should be returned by function `id_shard_no()`: you need to create
+  it beforehand in the schema where you install the library (or, alternatively,
+  the schema name should end with that number; then, the library will auto-infer
+  the shard number from it).
 - "RRRRRRRRRRRRRR" is a value which is unique within the chosen "environment
   number" and "microshard number". Depending on the function used, it is either
   a randomly-looking number (for `id_gen()` and `id_gen_uuid()`), a number based
@@ -38,6 +58,17 @@ Here,
 You can customize the length of "E", "ssss" and "RRRRRRRRRRRRRR" sequences in
 your `pg-id.config.sql` file, see below.
 
+The range of "E" or "EE" must be compatible with either
+MAX_BIGINT=9223372036854775807 prefix (when using 19 digit ids) or
+MAX_SAFE_INTEGER=9007199254740991 prefix (when using 16 digits in total). The
+library validates that at the installation time. Examples:
+
+- When using ids up to MAX_BIGINT in size (19 digits in total), "E" is 1..8, and
+  "EE" is 10..91.
+- When using ids up to MAX_SAFE_INTEGER in size (16 digits in total), "E" is
+  1..8, and "EE" is 10..89.
+
+All ids generated will have exactly the same number of decimal digits in them.
 
 ## Installation
 
@@ -107,10 +138,9 @@ production environments. If for some reason you don't want this behavior, just
 define `id_env_no()` function manually.
 
 Also, unless you created `id_shard_no()` manually, the installation script will
-try to infer the microshard number from the current schema name suffix. E.g. if
-your schemas are named `sh0000`, `sh0042`, `your_schema_1234` etc., then you're
-good with that default behavior.
-
+try to infer the microshard number from the 1st sequence of numbers in the
+schema name. E.g. if your schemas are named `sh0000`, `sh0042`,
+`your_schema_1234` etc., then you're good with that default behavior.
 
 ## id_gen()
 
@@ -126,7 +156,6 @@ Examples of ids generated (underscores are just for illustration):
 
 - `2_0000_17217633124378`: "environment 2, shard 0, number 17217633124378"
 - `1_0238_17493700363834`: "environment 1, shard 238, number 17493700363834"
-
 
 ## id_gen_timestampic()
 
@@ -148,7 +177,6 @@ Example of id generated (underscores are just for illustration):
 
 - `2_0001_435044939_00029`: "environment 2, shard 1, seconds 435044939, num 29"
 
-
 ## id_gen_monotonic()
 
 The simplest and fastest function among the above: generates next
@@ -166,7 +194,6 @@ Example of id generated (underscores are just for illustration):
 The downside is that the ids of this format basically expose the number of
 unique objects which were created in the database so far.
 
-
 ## id_gen_uuid()
 
 An example UUID generated by that function:
@@ -177,9 +204,8 @@ An example UUID generated by that function:
 
 Here, 1 is environment number (e.g. production) and 0246 is microshard number.
 
-Basically, the function uses PostgreSQL built-in
+Internally, the function uses PostgreSQL built-in
 [gen_random_uuid()](https://www.postgresql.org/docs/current/functions-uuid.html),
 but replaces the first digits with environment and microshard numbers. This
 trick doesn't cut too much of the UUID's entropy, but allows to use UUIDs in
 microsharded environment.
-

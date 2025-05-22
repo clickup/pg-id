@@ -9,8 +9,8 @@ LANGUAGE plpgsql
 SET search_path FROM CURRENT
 AS $$
 DECLARE
-  MAX_SAFE_INTEGER numeric := 9007199254740991;
   MAX_BIGINT numeric := 9223372036854775807;
+  MAX_SAFE_INTEGER numeric := 9007199254740991;
   env_no integer;
   shard_no integer;
   id_digits integer;
