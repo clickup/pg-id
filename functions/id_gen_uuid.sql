@@ -7,8 +7,8 @@ SELECT _id_template(
     -- Generates UUID v4 ID with environment and shard number prefix.
     --   Essssxxx-xxxx-4xxx-Nxxx-xxxxxxxxxxxx
     -- where decimal positions are:
-    -- a) E is environment number (1..9)
-    -- b) s is microshard number e.g. (0..9999)
+    -- a) E is environment number (e.g. 1..8)
+    -- b) s is microshard number (e.g. 0..9999)
     -- c) N is "UUID v4 variant number"
     DECLARE
       uuid text;

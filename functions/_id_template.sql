@@ -18,7 +18,7 @@ BEGIN
     k := args[i];
     v := args[i + 1];
     IF v IS NULL THEN
-      RAISE EXCEPTION 'Argument % is NULL: "%", args: %', k, template, args;
+      RAISE EXCEPTION 'Argument % is NULL: "%", args: %', k, trim(template), args;
     END IF;
     template := replace(template, '{I:' || k || '}', right(left(quote_ident(v || ''''), -2), -1));
     template := replace(template, '{SQL:' || k || '}', v);

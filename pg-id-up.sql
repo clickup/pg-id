@@ -46,8 +46,8 @@
 \set ON_ERROR_STOP on
 
 \ir ./functions/_id_template.sql
-
 \ir ./functions/_id_init.sql
+
 \ir ./functions/id_gen_monotonic.sql
 \ir ./functions/id_gen_timestampic.sql
 \ir ./functions/id_gen_uuid.sql
@@ -55,7 +55,16 @@
 \ir ./functions/id_pseudo_encrypt.sql
 \ir ./functions/id_test_dangerous.sql
 
-DROP FUNCTION _id_init(text);
+\set DB_ID_ENV_NO `echo "$DB_ID_ENV_NO"`
+SELECT _id_init(
+  env_no_str := :'DB_ID_ENV_NO',
+  const_env_mul := :'CONST_ENV_MUL',
+  const_shard_mul := :'CONST_SHARD_MUL',
+  const_rnd_mul := :'CONST_RND_MUL',
+  const_rnd_ts_mul := :'CONST_RND_TS_MUL'
+);
+
+DROP FUNCTION _id_init(text, numeric, numeric, numeric, numeric);
 DROP FUNCTION _id_template(text, text[]);
 
 CREATE SEQUENCE IF NOT EXISTS id_seq

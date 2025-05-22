@@ -7,10 +7,10 @@ SELECT _id_template(
     -- Generates next globally-unique id prefixed with timestamp.
     --   EssssTTTTnnnn...
     -- where decimal positions are:
-    -- a) E is environment number (1..7)
-    -- b) s is microshard number (0..9999)
+    -- a) E is environment number (e.g. 1..8)
+    -- b) s is microshard number (e.g. 0..9999)
     -- c) T is timestamp in seconds since 2010-01-01 UTC (9 decimal digits, +17 years from 2023)
-    -- c) n is monotonic sequence ring (up to 5 decimal digits, so up to 100k inserts/sec)
+    -- c) n is monotonic sequence ring (e.g. up to 5 decimal digits, so up to 100k inserts/sec)
     DECLARE
       seq text := {current_schema} || '.id_timestampic_seq';
       plain_id bigint;
@@ -32,7 +32,7 @@ SELECT _id_template(
   'CONST_RND_MUL', :'CONST_RND_MUL',
   'CONST_RND_TS_MUL', :'CONST_RND_TS_MUL',
   'CONST_RND_TS_START', :'CONST_RND_TS_START',
-  'CONST_RND_SEQ_MUL', (:CONST_RND_MUL / :CONST_RND_TS_MUL)::text,
+  'CONST_RND_SEQ_MUL', (:CONST_RND_MUL::bigint / :CONST_RND_TS_MUL::bigint)::text,
   'current_schema', current_schema
 ) AS tmp \gset
 :tmp

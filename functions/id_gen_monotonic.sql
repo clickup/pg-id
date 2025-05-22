@@ -7,9 +7,9 @@ SELECT _id_template(
     -- Generates next globally-unique monotonic id.
     --   EssssNNNNN...
     -- where decimal positions are:
-    -- a) E is environment number (1..7)
-    -- b) s is microshard number (0..9999)
-    -- c) N is monotonic sequence (up to 10^14)
+    -- a) E is environment number (e.g. 1..8)
+    -- b) s is microshard number (e.g. 0..9999)
+    -- c) N is monotonic sequence (e.g. up to 10^14)
     DECLARE
       seq text := {current_schema} || '.id_monotonic_seq';
       plain_id bigint;

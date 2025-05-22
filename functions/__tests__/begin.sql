@@ -20,11 +20,46 @@ CREATE FUNCTION expect(sql text, exp text, msg text) RETURNS void LANGUAGE plpgs
 DECLARE
   got text;
 BEGIN
-  EXECUTE sql INTO got;
+  EXECUTE trim(sql) INTO got;
   got := trim(E' \t\n' from regexp_replace(got, E'^[ \t]+', '', 'mg'));
   exp := trim(E' \t\n' from regexp_replace(exp, E'^[ \t]+', '', 'mg'));
   IF got IS DISTINCT FROM exp THEN
     RAISE EXCEPTION 'Expectation failed (%): expected %, got %', msg, exp, got;
   END IF;
+END;
+$$;
+
+CREATE FUNCTION expect_rollback(sql text, exp text, msg text) RETURNS void LANGUAGE plpgsql AS $$
+DECLARE
+  got text;
+BEGIN
+  BEGIN
+    PERFORM expect(sql, exp, msg);
+    RAISE EXCEPTION 'rollback';
+  EXCEPTION
+    WHEN OTHERS THEN
+      IF SQLERRM = 'rollback' THEN
+        NULL;
+      ELSE
+        RAISE;
+      END IF;
+  END;
+END;
+$$;
+
+CREATE FUNCTION expect_raise(sql text, exp text, msg text) RETURNS void LANGUAGE plpgsql AS $$
+DECLARE
+  got text;
+BEGIN
+  BEGIN
+    EXECUTE trim(sql) INTO got;
+    RAISE EXCEPTION 'Expected to raise an exception (%)', msg;
+  EXCEPTION
+    WHEN OTHERS THEN
+      GET STACKED DIAGNOSTICS got = MESSAGE_TEXT;
+      IF got NOT LIKE exp THEN
+        RAISE EXCEPTION 'Expected exception matching "%", got "%"', exp, got;
+      END IF;
+  END;
 END;
 $$;
