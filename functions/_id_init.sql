@@ -1,9 +1,7 @@
 CREATE OR REPLACE FUNCTION _id_init(
   env_no_str text,
   const_env_mul numeric,
-  const_shard_mul numeric,
-  const_rnd_mul numeric,
-  const_rnd_ts_mul numeric
+  const_shard_mul numeric
 ) RETURNS void
 LANGUAGE plpgsql
 SET search_path FROM CURRENT
@@ -13,30 +11,25 @@ DECLARE
   MAX_SAFE_INTEGER numeric := 9007199254740991;
   env_no integer;
   shard_no integer;
-  id_digits integer;
+  prefix_digits integer;
+  max_prefix_digits integer;
   max_env_no bigint;
-  prefix_of text;
 BEGIN
-  id_digits := length((const_env_mul * const_shard_mul * const_rnd_mul)::text) - 1;
+  max_prefix_digits := length(MAX_BIGINT::text) - 9 - 3;
+  prefix_digits := length(round(const_env_mul * const_shard_mul)::text) - 1;
   IF const_env_mul::text !~ '^10+$' THEN
     RAISE EXCEPTION 'CONST_ENV_MUL must be a power of 10';
-  ELSIF const_env_mul >= 1000000 THEN
-    RAISE EXCEPTION 'CONST_ENV_MUL must not be greater than 1000000';
   ELSIF const_shard_mul::text !~ '^10+$' THEN
     RAISE EXCEPTION 'CONST_SHARD_MUL must be a power of 10';
-  ELSIF const_shard_mul >= 10000000 THEN
-    RAISE EXCEPTION 'CONST_SHARD_MUL must not be greater than 10000000';
-  ELSIF const_rnd_mul::text !~ '^10+$' THEN
-    RAISE EXCEPTION 'CONST_RND_MUL must be a power of 10';
-  ELSIF const_rnd_ts_mul::text !~ '^10+$' THEN
-    RAISE EXCEPTION 'CONST_RND_TS_MUL must be a power of 10';
-  ELSIF const_rnd_ts_mul >= const_rnd_mul THEN
-    RAISE EXCEPTION 'CONST_RND_TS_MUL must be less than CONST_RND_MUL';
-  ELSIF id_digits > 19 THEN
+  ELSIF prefix_digits > max_prefix_digits THEN
     RAISE EXCEPTION
-      'To fit into a bigint number, CONST_ENV_MUL*CONST_SHARD_MUL*CONST_RND_MUL '
-      'combined must generate ids with not more than 19 decimal digits, but '
-      'they generated % digits', id_digits;
+      'CONST_ENV_MUL*CONST_SHARD_MUL combined must fit into % decimal digits, '
+      'but they are % digits combined. Reasoning: there must be enough space '
+      'left for timestamp part (9 digits) and sequence part (3+ digits) in '
+      'the full bigint id range (% digits)',
+      max_prefix_digits,
+      prefix_digits,
+      length(MAX_BIGINT::text);
   END IF;
 
   IF NOT EXISTS (
@@ -62,22 +55,17 @@ BEGIN
   END IF;
 
   env_no := id_env_no();
-  IF id_digits = length(MAX_BIGINT::text) THEN
-    max_env_no := left(MAX_BIGINT::text, length(const_env_mul::text) - 1)::bigint - 1;
-    prefix_of := 'MAX_BIGINT=' || MAX_BIGINT;
-  ELSIF id_digits = length(MAX_SAFE_INTEGER::text) THEN
-    max_env_no := left(MAX_SAFE_INTEGER::text, length(const_env_mul::text) - 1)::bigint - 1;
-    prefix_of := 'MAX_SAFE_INTEGER=' || MAX_SAFE_INTEGER;
-  ELSE
-    max_env_no := repeat('9', length(const_env_mul::text) - 1)::bigint;
-    prefix_of := 'MAX=' || repeat('9', id_digits);
-  END IF;
+  max_env_no := LEAST(
+    left(MAX_BIGINT::text, length(const_env_mul::text) - 1)::bigint - 1,
+    left(MAX_SAFE_INTEGER::text, length(const_env_mul::text) - 1)::bigint - 1
+  );
   IF env_no IS NULL OR env_no < round(const_env_mul / 10) OR env_no > max_env_no THEN
     RAISE EXCEPTION
-      'id_env_no() must return a number in %..% range (%), but it returned %',
+      'id_env_no() must return a number in %..% range (satisfying both MAX_BIGINT=% and MAX_SAFE_INTEGER=% decimal prefixes), but it returned %',
       round(const_env_mul / 10),
       max_env_no,
-      prefix_of,
+      MAX_BIGINT,
+      MAX_SAFE_INTEGER,
       env_no;
   END IF;
 

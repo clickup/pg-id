@@ -1,4 +1,6 @@
-CREATE OR REPLACE FUNCTION id_test_dangerous(num integer = 200000) RETURNS void
+\ir ./begin.sql
+
+CREATE OR REPLACE FUNCTION test_perf(num integer = 200000) RETURNS void
 LANGUAGE plpgsql
 SET search_path FROM CURRENT
 AS $$
@@ -21,11 +23,32 @@ BEGIN
   RAISE NOTICE 'id_gen(): % reqs/s', round(v / EXTRACT(SECONDS FROM clock_timestamp() - ts));
 
   ts := clock_timestamp();
+  SELECT count(DISTINCT id_gen_max_safe_integer()) FROM generate_series(1, num) INTO v;
+  IF v <> num THEN
+    RAISE EXCEPTION 'Invalid number of id_gen_max_safe_integer() distinct values: % (expected %)', v, num;
+  END IF;
+  RAISE NOTICE 'id_gen_max_safe_integer(): % reqs/s', round(v / EXTRACT(SECONDS FROM clock_timestamp() - ts));
+
+  ts := clock_timestamp();
   SELECT count(DISTINCT id_gen_monotonic()) FROM generate_series(1, num) INTO v;
   IF v <> num THEN
     RAISE EXCEPTION 'Invalid number of id_gen_monotonic() distinct values: % (expected %)', v, num;
   END IF;
   RAISE NOTICE 'id_gen_monotonic(): % reqs/s', round(v / EXTRACT(SECONDS FROM clock_timestamp() - ts));
+
+  ts := clock_timestamp();
+  SELECT count(DISTINCT id_gen_monotonic_max_safe_integer()) FROM generate_series(1, num) INTO v;
+  IF v <> num THEN
+    RAISE EXCEPTION 'Invalid number of id_gen_monotonic_max_safe_integer() distinct values: % (expected %)', v, num;
+  END IF;
+  RAISE NOTICE 'id_gen_monotonic_max_safe_integer(): % reqs/s', round(v / EXTRACT(SECONDS FROM clock_timestamp() - ts));
+
+  ts := clock_timestamp();
+  SELECT count(DISTINCT id_gen_monotonic_max_safe_integer('test_custom_seq')) FROM generate_series(1, num) INTO v;
+  IF v <> num THEN
+    RAISE EXCEPTION 'Invalid number of id_gen_monotonic_max_safe_integer() distinct values: % (expected %)', v, num;
+  END IF;
+  RAISE NOTICE 'id_gen_monotonic_max_safe_integer(''test_custom_seq''): % reqs/s', round(v / EXTRACT(SECONDS FROM clock_timestamp() - ts));
 
   ts := clock_timestamp();
   num := 99990; -- since we have limit of ids generated per second
@@ -37,5 +60,8 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION id_test_dangerous(integer)
-  IS 'For manual runs: verifies that the algorithms really work. Do not run in production!';
+SELECT test_perf() \gset
+
+DROP FUNCTION test_perf(integer);
+
+\ir ./rollback.sql

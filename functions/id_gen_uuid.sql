@@ -22,13 +22,12 @@ SELECT _id_template(
       RETURN (prefix || substring(uuid from length(prefix) + 1))::uuid;
     END
     $$;
+
+    COMMENT ON FUNCTION id_gen_uuid() IS
+      'Generates an UUID v4 compatible id. First several digits still contain the '
+      'information about environment and shard numbers. Example of the UUID generated: '
+      '10246xxx-xxxx-4xxx-Nxxx-xxxxxxxxxxxx';
   $sql$,
   'CONST_SHARD_MUL', :'CONST_SHARD_MUL',
   'current_schema', current_schema
-) AS tmp \gset
-:tmp
-
-COMMENT ON FUNCTION id_gen_uuid() IS
-  'Generates an UUID v4 compatible id. First several digits still contain the '
-  'information about environment and shard numbers. Example of the UUID generated: '
-  '10246xxx-xxxx-4xxx-Nxxx-xxxxxxxxxxxx';
+) \gexec

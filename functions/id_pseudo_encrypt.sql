@@ -9,9 +9,14 @@ LANGUAGE plpgsql
 SET search_path FROM CURRENT
 IMMUTABLE STRICT
 AS $$
--- Based on https://en.wikipedia.org/wiki/Feistel_cipher
+-- Based on https://wiki.postgresql.org/wiki/Pseudo_encrypt
 -- Given a value, generates its "random 1:1" equivalent which fits into
 -- the provided number of bits. Call one more time to get the original back.
+-- https://en.wikipedia.org/wiki/Feistel_cipher
+-- "The entire operation is guaranteed to be invertible (that is, encrypted
+-- data can be decrypted), even if the round function is not itself invertible.
+-- The round function can be made arbitrarily complicated, since it does not
+-- need to be designed to be invertible."
 DECLARE
   halfbits int := bits / 2;
   halfmask bigint := (2 ^ halfbits) - 1;

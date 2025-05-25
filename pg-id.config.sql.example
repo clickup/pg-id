@@ -1,25 +1,33 @@
--- Define the format of id (variadic part is 14 decimal positions, 46 bits).
--- * EssssRRRRR... (E: 1..7, ssss: 0000...9999, R: 14 decimal positions)
--- * 2^63 = 9_2233_72036854775808, so we have 19 decimal positions in total
+--
+-- Format of id: EssssRRRRR...; for the full BIGINT:
+--  * E: e.g. 1..8 (1 digit)
+--  * ssss: e.g. 0000...9999 (4 digits)
+--  * RRR...: e.g. remaining 14 decimal positions
+--  * 2^63 = 9_2233_72036854775808, so we have 19 decimal positions in total
+--
+-- Once set, NEVER change the values below, or the database will blow up!!!
+--
+
+--
+-- Define the length of the id prefix for all id_gen*() functions.
+--
 \set CONST_ENV_MUL 10
 \set CONST_SHARD_MUL 10000
-\set CONST_RND_MUL 100000000000000
 
 --
--- The values for id_gen_timestampic().
+-- The minimal timestamp for id_gen_timestampic().
+-- Default is "2020-01-01 00:00:00 UTC", makes ids work till 2051-01-01
+-- (the difference should fit in 9 decimal digits). The world won't live
+-- that long anyway due to the future AI apocalypse.
 --
-\set CONST_RND_TS_MUL 1000000000
-\set CONST_RND_TS_START 1262304000
+\set CONST_RND_TS_START 1577836800
 
 --
--- The values for id_gen(): all other methods don't use them. Based on
--- https://en.wikipedia.org/wiki/Feistel_cipher
+-- Crypto-constants for id_gen(): all other methods don't use them. Based on
+-- https://wiki.postgresql.org/wiki/Pseudo_encrypt
+-- The values below are very secret. The more random and longer they are, the
+-- better. Customize them once and don't change!
 --
--- NEVER change these values, or the database will blow up!!!
---
-\set CONST_RND_BITS 46
--- Crypto-constants for random looking ids: see id_gen(). The values below are
--- very secret. Don't mess, don't change!
-\set CONST_MUL 10000007141763
-\set CONST_SUM 10000003795571
-\set CONST_MOD 10000009458232
+\set CONST_MUL 17141763000000
+\set CONST_SUM 13795571000000
+\set CONST_MOD 19458232000000

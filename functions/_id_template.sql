@@ -20,7 +20,7 @@ BEGIN
     IF v IS NULL THEN
       RAISE EXCEPTION 'Argument % is NULL: "%", args: %', k, trim(template), args;
     END IF;
-    template := replace(template, '{I:' || k || '}', right(left(quote_ident(v || ''''), -2), -1));
+    template := replace(template, '{I:' || k || '}', quote_ident(v));
     template := replace(template, '{SQL:' || k || '}', v);
     template := replace(template, '{' || k || '}', quote_literal(v));
   END LOOP;

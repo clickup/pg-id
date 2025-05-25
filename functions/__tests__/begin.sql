@@ -2,8 +2,8 @@ SELECT current_database();
 
 BEGIN;
 
-CREATE SCHEMA test_pg_id;
-SET search_path TO test_pg_id;
+CREATE SCHEMA "test.pg_id";
+SET search_path TO "test.pg_id";
 SET client_min_messages TO NOTICE;
 \set ON_ERROR_STOP on
 
@@ -23,7 +23,7 @@ BEGIN
   EXECUTE trim(sql) INTO got;
   got := trim(E' \t\n' from regexp_replace(got, E'^[ \t]+', '', 'mg'));
   exp := trim(E' \t\n' from regexp_replace(exp, E'^[ \t]+', '', 'mg'));
-  IF got IS DISTINCT FROM exp THEN
+  IF got NOT LIKE exp THEN
     RAISE EXCEPTION 'Expectation failed (%): expected %, got %', msg, exp, got;
   END IF;
 END;
@@ -63,3 +63,5 @@ BEGIN
   END;
 END;
 $$;
+
+CREATE SEQUENCE test_custom_seq;
